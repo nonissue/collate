@@ -1,0 +1,61 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int       @id @default(autoincrement())
+  email         String    @unique
+  emailVerified DateTime? @map("email_verified")
+  createdAt     DateTime  @default(now()) @map(name: "created_at")
+  updatedAt     DateTime  @updatedAt @map(name: "updated_at")
+  name          String?
+  lates         Late[]
+  tags          Tag[]
+
+}
+
+model Late {
+  id        Int     @id @default(autoincrement())
+  title     String?
+  url       String
+  content   String?
+  published Boolean @default(false)
+
+  tags TagsOnLates[]
+
+  owner   User? @relation(fields: [ownerId], references: [id])
+  ownerId Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Tag {
+  id    Int    @id @default(autoincrement())
+  title String
+
+  lates TagsOnLates[]
+
+  User   User? @relation(fields: [userId], references: [id])
+  userId Int?
+}
+
+model TagsOnLates {
+  late   Late @relation(fields: [lateId], references: [id])
+  lateId Int // relation scalar field (used in the `@relation` attribute above)
+  tag    Tag  @relation(fields: [tagId], references: [id])
+  tagId  Int // relation scalar field (used in the `@relation` attribute above)
+
+  assignedAt DateTime @default(now())
+  assignedBy String
+
+  @@id([lateId, tagId])
+}
