@@ -19,7 +19,6 @@ model User {
   name          String?
   lates         Late[]
   tags          Tag[]
-
 }
 
 model Late {
