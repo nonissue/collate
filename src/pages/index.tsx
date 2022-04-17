@@ -5,7 +5,9 @@ import { useEffect, useState } from 'react';
 
 const LoginPage = () => {
   const { user, error } = useUser();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [data, setData] = useState<any>({});
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [lates, setLates] = useState<any[]>([]);
 
   const fetchLates = async () => {
