@@ -1,4 +1,4 @@
-import { PrismaClient, Late } from '@prisma/client';
+import { PrismaClient, Late, Tag, TagsOnLates } from '@prisma/client';
 import { InferGetServerSidePropsType } from 'next';
 import Link from 'next/link';
 
@@ -6,16 +6,38 @@ import Link from 'next/link';
 
 const prisma = new PrismaClient();
 
-export const getServerSideProps = async () => {
-  const late = await prisma.late.findFirst({});
+type TagWithLates = (Omit<Tag, 'lates'> & {
+  lates: (TagsOnLates & { late: Late })[];
+})[];
 
-  if (!late) {
+export const getServerSideProps = async () => {
+  const lates = await prisma.late.findMany({
+    include: { tags: { include: { tag: true } } },
+  });
+  const tags = await prisma.tag.findMany({
+    include: { lates: { include: { late: true } } },
+  });
+
+  if (!lates) {
     return {
-      props: { error: 'error fetching late', late: undefined },
+      props: {
+        error: 'error fetching late',
+        lates: undefined,
+        tags: undefined,
+      },
+    };
+  }
+  if (!tags) {
+    return {
+      props: {
+        error: 'error fetching tags',
+        tags: undefined,
+        lates: undefined,
+      },
     };
   }
 
-  return { props: { late: late, error: undefined } };
+  return { props: { lates: lates, tags: tags, error: undefined } };
 };
 
 const IndexPage = (
@@ -25,19 +47,57 @@ const IndexPage = (
     return <>Error! {props.error}</>;
   }
 
-  if (!props.late) {
+  if (!props.lates) {
     return <>Loading</>;
   }
 
-  const { late }: { late: Late } = props;
+  console.log(props);
+  console.log(props.lates);
+
+  const { lates }: { lates: Late[] } = props;
+  const { tags }: { tags: TagWithLates } = props;
+
+  console.log(tags);
+  // console.log(tags[0].lates);
+  // console.log(lates);
 
   return (
     <section className='text-base text-slate-600 dark:text-slate-300 divide-y-0 divide-slate-300 dark:divide-slate-700 divide-dashed'>
       <Link href='/'>
         <a>{'<'} Back</a>
       </Link>
-      <div>{late.url}</div>
-      <div>{late.createdAt.toLocaleString()}</div>
+
+      <div className='py-4 space-y-4'>
+        <div>
+          <h1 className='text-xl font-semibold'>Lates</h1>
+          <div>
+            {lates.map((late) => {
+              return <div key={late.id}>{late.url}</div>;
+            })}
+          </div>
+        </div>
+        <div>
+          <h1 className='text-xl font-semibold'>Tags</h1>
+          <div>
+            {tags.map((tag) => {
+              return (
+                <div key={tag.id}>
+                  <h2 className='text-lg font-semibold'>{tag.title}</h2>
+                  {tag.lates.map((late) => {
+                    return (
+                      <div key={late.lateId}>
+                        Late ID: {late.lateId}
+                        <br />
+                        Late Title:{late.late.title}
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
     </section>
   );
 };
