@@ -21,6 +21,6 @@
       "target": "esnext",
     },
     "exclude": ["node_modules", ".next", ".vercel", "public", "out"],
-    "include": ["**/*.ts", "**/*.tsx", "./.eslintrc.js", "./*.js", "src/lib/initSupabase.js"]
+    "include": ["**/*.ts", "**/*.tsx", "./.eslintrc.js", "./*.js"]
   }
   

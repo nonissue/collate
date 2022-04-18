@@ -1,82 +1,48 @@
-import { supabase } from '../lib/initSupabase';
-import { supabaseClient } from '@supabase/supabase-auth-helpers/nextjs';
-import { useUser, Auth } from '@supabase/supabase-auth-helpers/react';
-import { useEffect, useState } from 'react';
+import { PrismaClient, Late } from '@prisma/client';
+import { InferGetServerSidePropsType } from 'next';
+import Link from 'next/link';
 
-const LoginPage = () => {
-  const { user, error } = useUser();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [data, setData] = useState<any>({});
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [lates, setLates] = useState<any[]>([]);
+// import { PageWithLayout } from 'src/types/app';
 
-  const fetchLates = async () => {
-    const { data: result, error } = await supabase.from('late').select('*');
-    console.log('fetch lates called');
-    if (error) console.log('error', error);
-    else setLates(result);
-    console.log(result);
-  };
+const prisma = new PrismaClient();
 
-  useEffect(() => {
-    async function loadData() {
-      const { data } = await supabaseClient.from('late').select('*');
-      setData(data);
-    }
-    // Only run query once user is logged in.
-    if (user) loadData();
+export const getServerSideProps = async () => {
+  const late = await prisma.late.findFirst({});
 
-    if (user) fetchLates();
-  }, [user]);
+  if (!late) {
+    return {
+      props: { error: 'error fetching late', late: undefined },
+    };
+  }
 
-  console.log(user);
-  console.log('lates' + lates);
+  return { props: { late: late, error: undefined } };
+};
 
-  if (!user)
-    return (
-      <div className='p-4 bg-gray-50 rounded-xl border-2 shadow-sm'>
-        {error && <p>{error.message}</p>}
-        <Auth
-          // view="update_password"
-          supabaseClient={supabaseClient}
-          providers={['google', 'github']}
-          socialLayout='horizontal'
-          socialButtonSize='xlarge'
-        />
-      </div>
-    );
+const IndexPage = (
+  props: InferGetServerSidePropsType<typeof getServerSideProps>
+) => {
+  if (props.error) {
+    return <>Error! {props.error}</>;
+  }
+
+  if (!props.late) {
+    return <>Loading</>;
+  }
+
+  const { late }: { late: Late } = props;
 
   return (
-    <div className='space-y-4'>
-      <div className='rounded-xl shadow-[inset_0px_3px_6px_4px_rgba(0,0,0,0)] shadow-slate-300/50'>
-        <div className='flex justify-end items-stretch bg-slate-200/20 rounded-t-xl border  border-slate-400/50 border-b-slate-200 shadow-[inset_0px_3px_10px_4px_rgba(0,0,0,0)] shadow-slate-300/10'>
-          <div className='grow p-4 font-sans text-2xl font-bold tracking-tight text-slate-800 rounded-tl-xl'>
-            User (JSON)
-          </div>
-          <button
-            // eslint-disable-next-line tailwindcss/no-custom-classname
-            className='py-1 px-4 mb-auto text-xs  text-slate-900 bg-slate-100 hover:bg-white rounded-tl-none rounded-tr-xl rounded-br-none rounded-bl-xl border-b border-l border-slate-400/70  shadow-md text-md '
-            onClick={() => supabaseClient.auth.signOut()}>
-            Logout
-          </button>
-        </div>
-
-        <pre className='overflow-x-scroll p-6 text-xs leading-normal text-black rounded-b-2xl  border border-t-0 border-slate-300 '>
-          {JSON.stringify(user, null, 2)}
-        </pre>
-      </div>
-      <div className='rounded-xl shadow-[inset_0px_3px_6px_4px_rgba(0,0,0,0)] shadow-slate-300/50'>
-        <div className='flex justify-end items-stretch bg-slate-200/20 rounded-t-xl border  border-slate-400/50 border-b-slate-200 shadow-[inset_0px_3px_10px_4px_rgba(0,0,0,0)] shadow-slate-300/10'>
-          <div className='grow p-4 font-sans text-2xl font-bold tracking-tight text-slate-800 rounded-tl-xl'>
-            <p>client-side data fetching with RLS</p>
-          </div>
-        </div>
-        <pre className='overflow-x-scroll p-6 text-xs leading-normal text-black rounded-b-2xl  border border-t-0 border-slate-300 '>
-          {JSON.stringify(data, null, 2)}
-        </pre>
-      </div>
-    </div>
+    <section className='text-base text-slate-600 dark:text-slate-300 divide-y-0 divide-slate-300 dark:divide-slate-700 divide-dashed'>
+      <Link href='/'>
+        <a>{'<'} Back</a>
+      </Link>
+      <div>{late.url}</div>
+      <div>{late.createdAt.toLocaleString()}</div>
+    </section>
   );
 };
 
-export default LoginPage;
+// IndexPage.getLayout = getLayout;
+
+// eslint-disable-next-line import/no-default-export
+export default IndexPage;
