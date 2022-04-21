@@ -1,10 +1,7 @@
-import { PrismaClient, Late } from '@prisma/client';
+import { Late } from '@prisma/client';
 import { InferGetServerSidePropsType } from 'next';
 import Link from 'next/link';
-
-// import { PageWithLayout } from 'src/types/app';
-
-const prisma = new PrismaClient();
+import { prisma } from 'src/lib/prisma';
 
 export const getServerSideProps = async () => {
   const late = await prisma.late.findFirst({

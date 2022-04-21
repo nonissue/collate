@@ -1,12 +1,20 @@
+// pages/_app.tsx
+import type { NextPage } from 'next';
+import type { AppProps } from 'next/app';
+import type { ReactElement, ReactNode } from 'react';
 import 'src/styles/app.css';
-import { AppPropsWithLayout } from 'src/types/app';
 
-const MyApp = ({ Component, pageProps }: AppPropsWithLayout) => {
-  return (
-    <main className='mx-auto mt-10 max-w-lg '>
-      <Component {...pageProps} />
-    </main>
-  );
+type NextPageWithLayout = NextPage & {
+  getLayout?: (page: ReactElement) => ReactNode;
 };
 
-export default MyApp;
+type AppPropsWithLayout = AppProps & {
+  Component: NextPageWithLayout;
+};
+
+export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
+  // Use the layout defined at the page level, if available
+  const getLayout = Component.getLayout ?? ((page) => page);
+
+  return getLayout(<Component {...pageProps} />);
+}

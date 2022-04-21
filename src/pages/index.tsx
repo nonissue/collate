@@ -1,14 +1,20 @@
-import { PrismaClient, Late, Tag, TagsOnLates } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { InferGetServerSidePropsType } from 'next';
 import Link from 'next/link';
+import { getLayout } from 'src/layouts/Layout';
+import { prisma } from 'src/lib/prisma';
 
-// import { PageWithLayout } from 'src/types/app';
+const tagWithLates = Prisma.validator<Prisma.TagArgs>()({
+  include: { lates: { include: { late: true } } },
+});
 
-const prisma = new PrismaClient();
+type TagWithLates = Prisma.TagGetPayload<typeof tagWithLates>;
 
-type TagWithLates = (Omit<Tag, 'lates'> & {
-  lates: (TagsOnLates & { late: Late })[];
-})[];
+const lateWithTags = Prisma.validator<Prisma.LateArgs>()({
+  include: { tags: { include: { tag: true } } },
+});
+
+type LateWithTags = Prisma.LateGetPayload<typeof lateWithTags>;
 
 export const getServerSideProps = async () => {
   const lates = await prisma.late.findMany({
@@ -51,15 +57,10 @@ const IndexPage = (
     return <>Loading</>;
   }
 
-  console.log(props);
-  console.log(props.lates);
-
-  const { lates }: { lates: Late[] } = props;
-  const { tags }: { tags: TagWithLates } = props;
+  const { lates }: { lates: LateWithTags[] } = props;
+  const { tags }: { tags: TagWithLates[] } = props;
 
   console.log(tags);
-  // console.log(tags[0].lates);
-  // console.log(lates);
 
   return (
     <section className='text-base text-slate-600 dark:text-slate-300 divide-y-0 divide-slate-300 dark:divide-slate-700 divide-dashed'>
@@ -102,7 +103,7 @@ const IndexPage = (
   );
 };
 
-// IndexPage.getLayout = getLayout;
+IndexPage.getLayout = getLayout;
 
 // eslint-disable-next-line import/no-default-export
 export default IndexPage;
