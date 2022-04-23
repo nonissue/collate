@@ -2,6 +2,11 @@ import { PrismaClient, Prisma } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+const tags = [
+  { title: 'tag-category-seed-test' },
+  { title: 'tag-category-seed-test-2' },
+];
+
 const userData: Prisma.UserCreateInput[] = [
   {
     name: 'Alice',
@@ -10,6 +15,19 @@ const userData: Prisma.UserCreateInput[] = [
       create: [
         {
           url: 'test.com',
+          title: 'Seeding with test.com',
+          tags: {
+            create: tags.map((tag) => ({
+              assignedBy: 'Alice',
+              assignedAt: new Date(),
+              tag: {
+                create: {
+                  title: tag.title,
+                },
+              },
+            })),
+          },
+          category: { create: { title: 'books' } },
         },
       ],
     },
@@ -44,14 +62,24 @@ const userData: Prisma.UserCreateInput[] = [
   },
 ];
 
+// const tagData: Prisma.TagCreateInput[] = [
+//   { title: 'seeded-tag-one' },
+//   { title: 'seeded-tag-two' },
+//   { title: 'seeded-tag-three' },
+// ];
+
 async function main() {
   console.log(`Start seeding ...`);
+
+  const users = [];
   for (const u of userData) {
     const user = await prisma.user.create({
       data: u,
     });
+    users.push(user);
     console.log(`Created user with id: ${user.id}`);
   }
+  console.log(users);
   console.log(`Seeding finished.`);
 }
 

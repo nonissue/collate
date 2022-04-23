@@ -26,16 +26,10 @@ const fakeLates = prisma.late.create({
         },
       })),
     },
-    categories: {
+    category: {
       create: {
-        assignedBy: 'Andy',
-        assignedAt: new Date(),
-        category: {
-          create: {
-            published: true,
-            title: 'Books',
-          },
-        },
+        published: true,
+        title: 'Books',
       },
     },
   },
