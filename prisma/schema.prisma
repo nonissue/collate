@@ -30,13 +30,15 @@ model Late {
   published Boolean @default(false)
 
   tags       TagsOnLates[]
-  categories CategoryOnLates[]
+  category   Category?     @relation(fields: [categoryId], references: [id])
+  categoryId Int?
 
   owner   User? @relation(fields: [ownerId], references: [id])
   ownerId Int?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
 }
 
 model Tag {
@@ -66,20 +68,19 @@ model Category {
   title     String  @unique
   published Boolean @default(false)
 
-  lates CategoryOnLates[]
-
-  user   User? @relation(fields: [userId], references: [id])
+  lates  Late[]
+  user   User?  @relation(fields: [userId], references: [id])
   userId Int?
 }
 
-model CategoryOnLates {
-  late       Late     @relation(fields: [lateId], references: [id])
-  lateId     Int // relation scalar field (used in the `@relation` attribute above)
-  category   Category @relation(fields: [categoryID], references: [id])
-  categoryID Int // relation scalar field (used in the `@relation` attribute above)
+// model CategoryOnLates {
+//   late       Late     @relation(fields: [lateId], references: [id])
+//   lateId     Int      @unique // relation scalar field (used in the `@relation` attribute above)
+//   category   Category @relation(fields: [categoryID], references: [id])
+//   categoryID Int // relation scalar field (used in the `@relation` attribute above)
 
-  assignedAt DateTime @default(now())
-  assignedBy String
+//   assignedAt DateTime @default(now())
+//   assignedBy String
 
-  @@id([lateId, categoryID])
-}
+//   @@id([lateId, categoryID])
+// }
