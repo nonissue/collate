@@ -1,24 +1,11 @@
-import { Prisma } from '@prisma/client';
 import { InferGetServerSidePropsType } from 'next';
 import Link from 'next/link';
 import { getLayout } from 'src/layouts/Layout';
 import { prisma } from 'src/lib/prisma';
 
-const tagWithLates = Prisma.validator<Prisma.TagArgs>()({
-  include: { lates: { include: { late: true } } },
-});
-
-type TagWithLates = Prisma.TagGetPayload<typeof tagWithLates>;
-
-const lateWithTags = Prisma.validator<Prisma.LateArgs>()({
-  include: { tags: { include: { tag: true } } },
-});
-
-type LateWithTags = Prisma.LateGetPayload<typeof lateWithTags>;
-
 export const getServerSideProps = async () => {
   const lates = await prisma.late.findMany({
-    include: { tags: { include: { tag: true } } },
+    include: { tags: { include: { tag: true } }, category: true },
   });
   const tags = await prisma.tag.findMany({
     include: { lates: { include: { late: true } } },
@@ -57,10 +44,8 @@ const IndexPage = (
     return <>Loading</>;
   }
 
-  const { lates }: { lates: LateWithTags[] } = props;
-  const { tags }: { tags: TagWithLates[] } = props;
-
-  console.log(tags);
+  const { lates } = props;
+  const { tags } = props;
 
   return (
     <section className='text-base text-slate-600 dark:text-slate-300 divide-y-0 divide-slate-300 dark:divide-slate-700 divide-dashed'>
@@ -71,9 +56,17 @@ const IndexPage = (
       <div className='py-4 space-y-4'>
         <div>
           <h1 className='text-xl font-semibold'>Lates</h1>
-          <div>
+          <div className='py-4 space-y-6 divide-gray-400'>
             {lates.map((late) => {
-              return <div key={late.id}>{late.url}</div>;
+              console.log(late);
+
+              return (
+                <div key={late.id} className='border-b'>
+                  url: {late.url}
+                  <br />
+                  category: {late.category?.title ?? ''}
+                </div>
+              );
             })}
           </div>
         </div>
