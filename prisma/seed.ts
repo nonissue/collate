@@ -1,3 +1,5 @@
+/* eslint-disable */
+import { faker } from '@faker-js/faker';
 import { PrismaClient, Prisma } from '@prisma/client';
 
 const prisma = new PrismaClient();
@@ -7,17 +9,51 @@ const tags = [
   { title: 'tag-category-seed-test-2' },
 ];
 
+const generateFakeUser = () => {
+  return {
+    name: faker.name.findName(),
+    email: faker.internet.email(),
+  };
+};
+
+const generateFakeLate = () => {
+  return {
+    url: `https://${faker.internet.domainName()}/${faker.internet.domainWord()}`,
+    title: faker.company.bs(),
+    content: faker.lorem.sentence(),
+    published: faker.datatype.boolean(),
+  };
+};
+
+const generateFakeTag = () => {
+  return {
+    title: faker.company.bsNoun(),
+  };
+};
+
+// @ts-ignore
+const generateAndConnectFakeTags = async () => {
+  const userName = await prisma.user.findFirst({ select: { name: true } });
+
+  return {
+    assignedBy: userName,
+    assignedAt: new Date(),
+    tag: {
+      ...generateFakeTag(),
+    },
+  };
+};
+
 const userData: Prisma.UserCreateInput[] = [
   {
-    name: 'Alice',
-    email: 'alice@prisma.io',
+    ...generateFakeUser(),
     lates: {
       create: [
         {
-          url: 'test.com',
-          title: 'Seeding with test.com',
+          ...generateFakeLate(),
           tags: {
             create: tags.map((tag) => ({
+              // TODO: Need a way to reference an existing user or the user we just created...
               assignedBy: 'Alice',
               assignedAt: new Date(),
               tag: {
@@ -27,7 +63,12 @@ const userData: Prisma.UserCreateInput[] = [
               },
             })),
           },
-          category: { create: { title: 'books' } },
+          category: {
+            connectOrCreate: {
+              where: { title: 'books' },
+              create: { title: 'books' },
+            },
+          },
         },
       ],
     },
@@ -38,7 +79,22 @@ const userData: Prisma.UserCreateInput[] = [
     lates: {
       create: [
         {
-          url: 'nonissue.org',
+          ...generateFakeLate(),
+          category: {
+            connectOrCreate: {
+              where: { title: 'movies' },
+              create: { title: 'movies' },
+            },
+          },
+        },
+        {
+          ...generateFakeLate(),
+          category: {
+            connectOrCreate: {
+              where: { title: 'movies' },
+              create: { title: 'movies' },
+            },
+          },
         },
       ],
     },
@@ -52,6 +108,18 @@ const userData: Prisma.UserCreateInput[] = [
           title: 'Ask a question about Prisma on GitHub',
           url: 'https://www.github.com/prisma/prisma/discussions',
           published: true,
+          tags: {
+            create: {
+              // TODO: Need a way to reference an existing user or the user we just created...
+              assignedBy: 'Mahmoud',
+              assignedAt: new Date(),
+              tag: {
+                create: {
+                  ...generateFakeTag(),
+                },
+              },
+            },
+          },
         },
         {
           title: 'Prisma on YouTube',
@@ -61,12 +129,6 @@ const userData: Prisma.UserCreateInput[] = [
     },
   },
 ];
-
-// const tagData: Prisma.TagCreateInput[] = [
-//   { title: 'seeded-tag-one' },
-//   { title: 'seeded-tag-two' },
-//   { title: 'seeded-tag-three' },
-// ];
 
 async function main() {
   console.log(`Start seeding ...`);
