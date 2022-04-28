@@ -5,7 +5,7 @@ import { prisma } from 'src/lib/prisma';
 
 export const getServerSideProps = async () => {
   const lates = await prisma.late.findMany({
-    include: { tags: { include: { tag: true } }, category: true },
+    include: { tags: { include: { tag: true } }, category: true, owner: true },
   });
   const tags = await prisma.tag.findMany({
     include: { lates: { include: { late: true } } },
@@ -50,21 +50,24 @@ const IndexPage = (
   return (
     <section className='text-base text-slate-600 dark:text-slate-300 divide-y-0 divide-slate-300 dark:divide-slate-700 divide-dashed'>
       <Link href='/'>
-        <a>{'<'} Back</a>
+        <a>Collate</a>
       </Link>
 
-      <div className='py-4 space-y-4'>
+      <div className='py-4'>
         <div>
           <h1 className='text-xl font-semibold'>Lates</h1>
-          <div className='py-4 space-y-6 divide-gray-400'>
+          <div className='py-3 divide-y divide-gray-300'>
             {lates.map((late) => {
-              console.log(late);
-
               return (
-                <div key={late.id} className='border-b'>
-                  url: {late.url}
-                  <br />
-                  category: {late.category?.title ?? ''}
+                <div key={late.id} className='py-3'>
+                  title: {late.title ?? 'no title'} <br />
+                  owner: {late.owner?.email.toLowerCase() ?? 'no owner'} <br />
+                  url: {late.url} <br />
+                  category: {late.category?.title ?? ''} <br />
+                  tags:
+                  {late.tags.map((tag) => {
+                    return <div key={tag.tag.id}>{tag.tag.title}</div>;
+                  })}
                 </div>
               );
             })}

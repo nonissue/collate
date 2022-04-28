@@ -18,16 +18,22 @@ const handler = async (
 };
 
 async function handleGET(req: NextApiRequest, res: NextApiResponse) {
-  const lateId = req.query.id[0];
-  //   let result;
-  //   try {
-  //       result = await db.late.findUnique({ where: req.query.id });
-  //   } catch (error) {
-  //     console.log(error);
-  //     return res.status(500).json({ error });
-  //   }
+  const queryId = req.query.id[0];
+  let result;
 
-  return res.status(200).json(lateId);
+  try {
+    result = await db.late.findUnique({
+      where: { id: parseInt(queryId) },
+    });
+
+    if (!result) {
+      throw new Error('nothing found');
+    }
+  } catch (error) {
+    return res.status(500).json({ code: 500, message: 'Late not found' });
+  }
+
+  return res.status(200).json(result);
 }
 
 // - [ ] fetch definition IF MISSING after create, then update
