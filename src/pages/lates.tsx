@@ -17,8 +17,6 @@ export const getServerSideProps = async () => {
     };
   }
 
-  console.log(late);
-
   return { props: { late: late, error: undefined } };
 };
 
