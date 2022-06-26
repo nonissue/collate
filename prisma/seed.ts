@@ -1,12 +1,12 @@
 /* eslint-disable */
-import { faker } from '@faker-js/faker';
-import { PrismaClient, Prisma } from '@prisma/client';
+import { faker } from "@faker-js/faker";
+import { PrismaClient, Prisma } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 const tags = [
-  { title: 'tag-category-seed-test' },
-  { title: 'tag-category-seed-test-2' },
+  { title: "tag-category-seed-test" },
+  { title: "tag-category-seed-test-2" },
 ];
 
 const generateFakeUser = () => {
@@ -54,7 +54,7 @@ const userData: Prisma.UserCreateInput[] = [
           tags: {
             create: tags.map((tag) => ({
               // TODO: Need a way to reference an existing user or the user we just created...
-              assignedBy: 'Alice',
+              assignedBy: "Alice",
               assignedAt: new Date(),
               tag: {
                 create: {
@@ -65,8 +65,8 @@ const userData: Prisma.UserCreateInput[] = [
           },
           category: {
             connectOrCreate: {
-              where: { title: 'books' },
-              create: { title: 'books' },
+              where: { title: "books" },
+              create: { title: "books" },
             },
           },
         },
@@ -74,16 +74,16 @@ const userData: Prisma.UserCreateInput[] = [
     },
   },
   {
-    name: 'Nilu',
-    email: 'nilu@prisma.io',
+    name: "Nilu",
+    email: "nilu@prisma.io",
     lates: {
       create: [
         {
           ...generateFakeLate(),
           category: {
             connectOrCreate: {
-              where: { title: 'movies' },
-              create: { title: 'movies' },
+              where: { title: "movies" },
+              create: { title: "movies" },
             },
           },
         },
@@ -91,8 +91,8 @@ const userData: Prisma.UserCreateInput[] = [
           ...generateFakeLate(),
           category: {
             connectOrCreate: {
-              where: { title: 'movies' },
-              create: { title: 'movies' },
+              where: { title: "movies" },
+              create: { title: "movies" },
             },
           },
         },
@@ -100,18 +100,18 @@ const userData: Prisma.UserCreateInput[] = [
     },
   },
   {
-    name: 'Mahmoud',
-    email: 'mahmoud@prisma.io',
+    name: "Mahmoud",
+    email: "mahmoud@prisma.io",
     lates: {
       create: [
         {
-          title: 'Ask a question about Prisma on GitHub',
-          url: 'https://www.github.com/prisma/prisma/discussions',
+          title: "Ask a question about Prisma on GitHub",
+          url: "https://www.github.com/prisma/prisma/discussions",
           published: true,
           tags: {
             create: {
               // TODO: Need a way to reference an existing user or the user we just created...
-              assignedBy: 'Mahmoud',
+              assignedBy: "Mahmoud",
               assignedAt: new Date(),
               tag: {
                 create: {
@@ -122,8 +122,8 @@ const userData: Prisma.UserCreateInput[] = [
           },
         },
         {
-          title: 'Prisma on YouTube',
-          url: 'https://pris.ly/youtube',
+          title: "Prisma on YouTube",
+          url: "https://pris.ly/youtube",
         },
       ],
     },

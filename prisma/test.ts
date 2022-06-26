@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -40,20 +40,20 @@ const prisma = new PrismaClient();
 // });
 
 const tags = [
-  { title: 'connectOrCreateTest1' },
-  { title: 'connectOrCreateTest2' },
+  { title: "connectOrCreateTest1" },
+  { title: "connectOrCreateTest2" },
 ];
 
 const fakeLates = prisma.late.create({
   include: { tags: { include: { tag: true } } },
   data: {
-    title: 'A Fake Late',
-    url: 'https://andy.ws',
-    content: 'My portfolio site!',
+    title: "A Fake Late",
+    url: "https://andy.ws",
+    content: "My portfolio site!",
     published: true,
     tags: {
       create: tags.map((tag) => ({
-        assignedBy: 'Andy',
+        assignedBy: "Andy",
         assignedAt: new Date(),
         tag: {
           create: {

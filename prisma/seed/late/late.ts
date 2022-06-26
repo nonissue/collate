@@ -1,23 +1,23 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 const tags = [
-  { title: 'tag-category-seed-test' },
-  { title: 'tag-category-seed-test-2' },
+  { title: "tag-category-seed-test" },
+  { title: "tag-category-seed-test-2" },
 ];
 
 const fakeLates = prisma.late.create({
   include: { tags: { include: { tag: true } } },
   data: {
-    title: 'A late, with tags and categories on creation',
-    url: 'https://andy.ws',
-    content: 'This late should create both tags and categories when seeded.',
+    title: "A late, with tags and categories on creation",
+    url: "https://andy.ws",
+    content: "This late should create both tags and categories when seeded.",
     published: true,
     tags: {
       create: tags.map((tag) => ({
-        assignedBy: 'Andy',
+        assignedBy: "Andy",
         assignedAt: new Date(),
         tag: {
           create: {
@@ -29,7 +29,7 @@ const fakeLates = prisma.late.create({
     category: {
       create: {
         published: true,
-        title: 'Books',
+        title: "Books",
       },
     },
   },

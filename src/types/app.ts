@@ -1,4 +1,4 @@
-import { Late, TagsOnLates } from '@prisma/client';
+import { Late, TagsOnLates } from "@prisma/client";
 
 type User = {
   id: number;

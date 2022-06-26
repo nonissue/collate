@@ -42,7 +42,7 @@ async function handleGET(req: NextApiRequest, res: NextApiResponse) {
 // - [x] handle collision
 async function handlePOST(req: NextApiRequest, res: NextApiResponse) {
   const { title } = req.body;
-  
+
   let result;
   let isCategoryUnique;
 

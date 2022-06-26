@@ -11,13 +11,13 @@ const handler = async (
   } else if (req.method === "POST") {
     return handlePOST(req, res);
   } else if (req.method === "UPSERT") {
-return res.status(501).json({
-      error: "Featured not yet implemented"
-    })
+    return res.status(501).json({
+      error: "Featured not yet implemented",
+    });
   } else if (req.method === "DELETE") {
     return res.status(501).json({
-      error: "Featured not yet implemented"
-    })
+      error: "Featured not yet implemented",
+    });
   } else {
     return res.status(500).json({
       error: `The HTTP ${req.method} method is not supported at this route.`,
