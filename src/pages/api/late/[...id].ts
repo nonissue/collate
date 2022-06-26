@@ -2,6 +2,12 @@ import { Prisma } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { prisma as db } from 'src/lib/prisma';
 
+/* need to handle:
+- GET /api/late/[id]
+- UPSERT /api/late/[id]
+- DELETE /api/late/[id]
+*/
+
 const handler = async (
   req: NextApiRequest,
   res: NextApiResponse

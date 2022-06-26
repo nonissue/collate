@@ -1,7 +1,7 @@
-import { Late } from '@prisma/client';
-import { InferGetServerSidePropsType } from 'next';
-import Link from 'next/link';
-import { prisma } from 'src/lib/prisma';
+import { Late } from "@prisma/client";
+import { InferGetServerSidePropsType } from "next";
+import Link from "next/link";
+import { prisma } from "src/lib/prisma";
 
 export const getServerSideProps = async () => {
   const late = await prisma.late.findFirst({
@@ -13,7 +13,7 @@ export const getServerSideProps = async () => {
 
   if (!late) {
     return {
-      props: { error: 'error fetching late', late: undefined },
+      props: { error: "error fetching late", late: undefined },
     };
   }
 
@@ -36,9 +36,9 @@ const LatesPage = (
   console.log(late);
 
   return (
-    <section className='text-base text-slate-600 dark:text-slate-300 divide-y-0 divide-slate-300 dark:divide-slate-700 divide-dashed'>
-      <Link href='/'>
-        <a>{'<'} Back</a>
+    <section className="divide-y-0 divide-dashed divide-slate-300 text-base text-slate-600 dark:divide-slate-700 dark:text-slate-300">
+      <Link href="/">
+        <a>{"<"} Back</a>
       </Link>
       <div>{late.url}</div>
       <div>{late.createdAt.toLocaleString()}</div>

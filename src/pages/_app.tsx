@@ -1,8 +1,8 @@
 // pages/_app.tsx
-import type { NextPage } from 'next';
-import type { AppProps } from 'next/app';
-import type { ReactElement, ReactNode } from 'react';
-import 'src/styles/app.css';
+import type { NextPage } from "next";
+import type { AppProps } from "next/app";
+import type { ReactElement, ReactNode } from "react";
+import "src/styles/app.css";
 
 type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode;
