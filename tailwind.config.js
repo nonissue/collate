@@ -10,6 +10,7 @@ module.exports = {
     "./src/layouts/**/*.{js,ts,jsx,tsx}",
   ],
   darkMode: "class", // 'media' or 'class'
+  plugins: [require("@tailwindcss/forms")],
   theme: {
     extend: {
       colors: {
