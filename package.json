@@ -4,7 +4,10 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "type-check": "tsc",
+    "lint": "eslint --ext .ts,.tsx,.js,.jsx .  && yarn next lint",
+    "eslint": "node ./node_modules/eslint/bin/eslint.js --ext .ts,.tsx ."
   },
   "dependencies": {
     "@prisma/client": "3.12.0",
