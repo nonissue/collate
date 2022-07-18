@@ -24,6 +24,11 @@ const handler = async (
 };
 
 async function handleGET(req: NextApiRequest, res: NextApiResponse) {
+  if (!req.query.id) {
+    return res
+      .status(500)
+      .json({ code: 500, message: "Please specify a late id" });
+  }
   const queryId = req.query.id[0];
   let result;
 

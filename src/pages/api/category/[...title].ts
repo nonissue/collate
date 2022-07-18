@@ -27,6 +27,10 @@ const handler = async (
 
 async function handleGET(req: NextApiRequest, res: NextApiResponse) {
   console.log(req.query);
+  if (!req.query.title) {
+    return res.status(404).json({ code: 500, message: "Category not found" });
+  }
+
   const queryTitle = req.query.title[0];
   let result;
 

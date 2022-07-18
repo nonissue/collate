@@ -18,6 +18,11 @@ const handler = async (
 };
 
 async function handleGET(req: NextApiRequest, res: NextApiResponse) {
+  if (!req.query.title) {
+    return res
+      .status(500)
+      .json({ code: 500, message: "Error loading categories not found" });
+  }
   const queryTitle = req.query.title[0];
   let result;
 
